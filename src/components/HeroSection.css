@@ -1,0 +1,104 @@
+.hero-control-btn,
+.hero-control-btn:hover,
+.hero-control-btn:focus,
+.hero-control-btn:active {
+	background-color: transparent;
+}
+
+.hero-video {
+	object-fit: cover;
+	width: 100%;
+	height: 100%;
+}
+
+.hero-text-shell {
+	position: relative;
+}
+
+.hero-glow {
+	position: absolute;
+	inset: -24px;
+	border-radius: 48px;
+	background: radial-gradient(circle at 50% 40%, rgba(255, 255, 255, 0.35), rgba(0, 0, 0, 0));
+	filter: blur(6px);
+	opacity: 0.85;
+	pointer-events: none;
+}
+
+.hero-headline {
+	text-shadow: 0 10px 40px rgba(0, 0, 0, 0.65);
+	letter-spacing: -0.02em;
+}
+
+.hero-primary-btn {
+	background-color: #1c69d4 !important;
+	color: #ffffff !important;
+	border-color: #1c69d4 !important;
+}
+
+.hero-primary-btn:hover,
+.hero-primary-btn:focus {
+	background-color: #1556ad !important;
+}
+
+.hero-secondary-btn {
+	background-color: rgba(255, 255, 255, 0.1) !important;
+	color: #ffffff !important;
+	border-color: rgba(255, 255, 255, 0.4) !important;
+}
+
+.hero-secondary-btn:hover,
+.hero-secondary-btn:focus {
+	background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.hero-overlay {
+	opacity: 0;
+	animation: heroOverlayFade 0.9s ease-out forwards;
+	animation-delay: 5s;
+}
+
+.hero-panel {
+	backdrop-filter: blur(18px);
+	-webkit-backdrop-filter: blur(18px);
+	background-color: rgba(0, 0, 0, 0.2);
+	border-color: rgba(255, 255, 255, 0.1);
+}
+
+.hero-panel--delayed {
+	opacity: 0;
+	backdrop-filter: blur(4px);
+	-webkit-backdrop-filter: blur(4px);
+	background-color: rgba(0, 0, 0, 0.08);
+	border-color: rgba(255, 255, 255, 0.04);
+	animation: heroPanelReveal 0.9s ease-out forwards;
+	animation-delay: 5s;
+}
+
+@keyframes heroOverlayFade {
+	from {
+		opacity: 0;
+		transform: translateY(24px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes heroPanelReveal {
+	from {
+		opacity: 0;
+		backdrop-filter: blur(4px);
+		-webkit-backdrop-filter: blur(4px);
+		background-color: rgba(0, 0, 0, 0.08);
+		border-color: rgba(255, 255, 255, 0.04);
+	}
+	to {
+		opacity: 1;
+		backdrop-filter: blur(18px);
+		-webkit-backdrop-filter: blur(18px);
+		background-color: rgba(0, 0, 0, 0.2);
+		border-color: rgba(255, 255, 255, 0.1);
+	}
+}
