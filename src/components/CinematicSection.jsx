@@ -3,72 +3,41 @@ import './CinematicSection.css';
 
 const cinematicClips = [
 	{
-		title: 'BMW m5 Competition',
-		subtitle: 'Velocity in stealth mode',
-		description: 'Launch control, laser shifters, and a cockpit that lights up like a command center. This is autobahn poetry.',
+		title: 'BMW M5 Competition',
+		subtitle: 'Raw Power Refined',
+		description: 'Experience the perfect balance of luxury and performance with 720 hp of pure adrenaline.',
 		video: '/videos/m5core.mp4',
 		poster: '/videos/m5comp.jpg',
 		stats: [
-			{ label: '0-100 km/h', value: '3.3 s' },
-			{ label: 'Launch g-force', value: '1.09 g' },
-			{ label: 'Power', value: '720 hp' },
-			{ label: 'Drive logic', value: 'xDrive M' }
-		],
-		signatureStat: {
-			value: '305 km/h',
-			label: 'V-MAX unlocked',
-			meta: 'M Driver’s Package engaged'
-		},
-		highlights: ['Adaptive M suspension', 'Carbon ceramic brakes', 'Laserlight matrix']
+			{ label: '0-100 km/h', value: '3.3' },
+			{ label: 'Power', value: '720' },
+			{ label: 'Top Speed', value: '305' }
+		]
 	},
 	{
 		title: 'BMW XM Label Red',
-		subtitle: 'Hybrid renegade',
-		description: 'TwinPower V8 meets electric thrust with adaptive torque shells that carve new racing lines.',
+		subtitle: 'Hybrid Powerhouse',
+		description: 'The ultimate expression of M performance meets electrified efficiency in one bold package.',
 		video: '/videos/BMWXX7.mp4',
 		poster: '/videos/BMWX7.jpg',
 		stats: [
-			{ label: '0-100 km/h', value: '3.8 s' },
-			{ label: 'System output', value: '748 hp' },
-			{ label: 'Torque', value: '1,000 Nm' },
-			{ label: 'EV range', value: '83 km' }
-		],
-		signatureStat: {
-			value: '83 km',
-			label: 'Silent mission range',
-			meta: 'Pure-electric mode at city speeds'
-		},
-		highlights: ['Torque shells', 'Electro-boost launch', 'Illuminated kidney grille']
+			{ label: '0-100 km/h', value: '3.8' },
+			{ label: 'Power', value: '748' },
+			{ label: 'EV Range', value: '83' }
+		]
 	}
 ];
 
-const parseValue = (value) => {
-	const match = value.match(/[\d.,]+/);
-	if (!match) {
-		return { number: 0, decimals: 0, prefix: value, suffix: '' };
-	}
-	const numericPart = match[0];
-	const decimals = numericPart.includes('.') ? numericPart.split('.')[1].length : 0;
-	return {
-		number: parseFloat(numericPart.replace(/,/g, '')) || 0,
-		decimals,
-		prefix: value.slice(0, match.index),
-		suffix: value.slice(match.index + numericPart.length)
-	};
-};
-
-const animateValue = (parts, setter, duration = 1200) => {
-	const formatter = new Intl.NumberFormat('en-US', {
-		minimumFractionDigits: parts.decimals,
-		maximumFractionDigits: parts.decimals
-	});
+const animateNumber = (target, setter, duration = 1500) => {
 	let rafId;
 	const start = performance.now();
+	const targetNum = parseFloat(target);
 
 	const step = (now) => {
 		const progress = Math.min((now - start) / duration, 1);
-		const current = parts.number * progress;
-		setter(`${parts.prefix}${formatter.format(current)}${parts.suffix}`);
+		const eased = 1 - Math.pow(1 - progress, 3);
+		const current = targetNum * eased;
+		setter(current.toFixed(1));
 		if (progress < 1) {
 			rafId = requestAnimationFrame(step);
 		}
@@ -81,21 +50,13 @@ const animateValue = (parts, setter, duration = 1200) => {
 export default function CinematicSection() {
 	const [activeIndex, setActiveIndex] = useState(0);
 	const [isMuted, setIsMuted] = useState(true);
-	const [signatureDisplay, setSignatureDisplay] = useState(() => {
-		const parts = parseValue(cinematicClips[0].signatureStat.value);
-		return `${parts.prefix}0${parts.suffix}`;
-	});
-	const [statsDisplay, setStatsDisplay] = useState(() =>
-		cinematicClips[0].stats.map((stat) => {
-			const parts = parseValue(stat.value);
-			return `${parts.prefix}0${parts.suffix}`;
-		})
-	);
+	const [isFullscreen, setIsFullscreen] = useState(false);
+	const [statsDisplay, setStatsDisplay] = useState(['0.0', '0.0', '0.0']);
 	const sectionRef = useRef(null);
 	const videoRef = useRef(null);
+	const containerRef = useRef(null);
 	const [inView, setInView] = useState(false);
 	const activeClip = cinematicClips[activeIndex];
-	const totalClips = cinematicClips.length;
 
 	useEffect(() => {
 		const node = sectionRef.current;
@@ -124,127 +85,153 @@ export default function CinematicSection() {
 	}, [activeIndex, isMuted]);
 
 	useEffect(() => {
-		const sigParts = parseValue(activeClip.signatureStat.value);
-		setSignatureDisplay(`${sigParts.prefix}0${sigParts.suffix}`);
-		setStatsDisplay(
-			activeClip.stats.map((stat) => {
-				const parts = parseValue(stat.value);
-				return `${parts.prefix}0${parts.suffix}`;
-			})
-		);
+		setStatsDisplay(['0.0', '0.0', '0.0']);
 
 		if (!inView) return;
 		const cleanups = [];
-		cleanups.push(animateValue(sigParts, setSignatureDisplay));
 
 		activeClip.stats.forEach((stat, idx) => {
-			const parts = parseValue(stat.value);
 			cleanups.push(
-				animateValue(parts, (text) => {
+				animateNumber(stat.value, (val) => {
 					setStatsDisplay((prev) => {
 						const next = [...prev];
-						next[idx] = text;
+						next[idx] = val;
 						return next;
 					});
-				})
+				}, 1500 + idx * 200)
 			);
 		});
 
 		return () => cleanups.forEach((cleanup) => cleanup && cleanup());
 	}, [activeClip, inView]);
 
-	const goNext = () => setActiveIndex((prev) => (prev + 1) % totalClips);
-	const goPrev = () => setActiveIndex((prev) => (prev - 1 + totalClips) % totalClips);
+	useEffect(() => {
+		const handleFullscreenChange = () => {
+			setIsFullscreen(!!document.fullscreenElement);
+		};
+		document.addEventListener('fullscreenchange', handleFullscreenChange);
+		return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+	}, []);
+
+	const goNext = () => setActiveIndex((prev) => (prev + 1) % cinematicClips.length);
+	const goPrev = () => setActiveIndex((prev) => (prev - 1 + cinematicClips.length) % cinematicClips.length);
 	const toggleMute = () => {
 		setIsMuted((prev) => !prev);
 		if (videoRef.current) videoRef.current.muted = !isMuted;
 	};
 
-	return (
-		<section ref={sectionRef} className={`cinematic-section ${inView ? 'cinematic-visible' : ''}`}>
-			<div className="cinematic-video-shell">
-				<video
-					ref={videoRef}
-					key={activeClip.video}
-					autoPlay
-					loop
-					muted={isMuted}
-					playsInline
-					preload="auto"
-					poster={activeClip.poster}
-				>
-					<source src={activeClip.video} type="video/mp4" />
-				</video>
-				<div className="cinematic-gradient"></div>
+	const toggleFullscreen = async () => {
+		if (!containerRef.current) return;
+		try {
+			if (!document.fullscreenElement) {
+				await containerRef.current.requestFullscreen();
+			} else {
+				await document.exitFullscreen();
+			}
+		} catch (err) {
+			console.log('Fullscreen error:', err);
+		}
+	};
 
-				<div className="cinematic-ticker" aria-hidden="true">
-					<div className="cinematic-ticker-track">
-						{activeClip.stats.concat(activeClip.stats).map(({ label, value }, idx) => (
-							<span key={`${label}-${value}-${idx}`}>
-								<strong>{value}</strong>
-								{label}
-							</span>
-						))}
+	return (
+		<section ref={sectionRef} className={`cinematic-section ${inView ? 'visible' : ''}`} style={{ fontFamily: "'Orbitron', sans-serif" }}>
+			<div ref={containerRef} className={`cinematic-container ${isFullscreen ? 'fullscreen' : ''}`}>
+				<div className="cinematic-video-wrapper">
+					<video
+						ref={videoRef}
+						key={activeClip.video}
+						autoPlay
+						loop
+						muted={isMuted}
+						playsInline
+						preload="auto"
+						poster={activeClip.poster}
+						className="cinematic-video"
+					>
+						<source src={activeClip.video} type="video/mp4" />
+					</video>
+					<div className="cinematic-overlay-gradient"></div>
+				</div>
+
+				<div className="cinematic-top-bar">
+					<div className="cinematic-badge">
+						<span className="badge-dot"></span>
+						<span>BMW PERFORMANCE</span>
+					</div>
+					<div className="cinematic-actions">
+						<button className="cinematic-icon-btn" onClick={toggleMute} aria-label="Toggle sound">
+							{isMuted ? (
+								<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+									<path d="M11 5L6 9H2v6h4l5 4V5z"/>
+									<line x1="23" y1="9" x2="17" y2="15"/>
+									<line x1="17" y1="9" x2="23" y2="15"/>
+								</svg>
+							) : (
+								<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+									<path d="M11 5L6 9H2v6h4l5 4V5z"/>
+									<path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+								</svg>
+							)}
+						</button>
+						<button className="cinematic-icon-btn" onClick={toggleFullscreen} aria-label="Toggle fullscreen">
+							{isFullscreen ? (
+								<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+									<path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/>
+								</svg>
+							) : (
+								<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+									<path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+								</svg>
+							)}
+						</button>
 					</div>
 				</div>
 
-				<div className="cinematic-overlay">
-					<div className="cinematic-toolbar">
-						<button type="button" className="cinematic-audio-toggle" onClick={toggleMute}>
-							{isMuted ? 'Enable audio' : 'Mute audio'}
-						</button>
-						<span className="cinematic-clip-count">
-							Clip {String(activeIndex + 1).padStart(2, '0')} / {String(totalClips).padStart(2, '0')}
-						</span>
+				<div className="cinematic-content">
+					<div className="cinematic-text-block">
+						<h2 className="cinematic-title">{activeClip.title}</h2>
+						<p className="cinematic-subtitle">{activeClip.subtitle}</p>
+						<p className="cinematic-desc">{activeClip.description}</p>
 					</div>
 
-					<div className="cinematic-layout">
-						<div className="cinematic-column cinematic-column--hero">
-							<p className="cinematic-kicker">BMW // Cinematic Labs</p>
-							<div className="cinematic-signature">
-								<span className="value">{signatureDisplay}</span>
-								<span className="label">{activeClip.signatureStat.label}</span>
-								<p className="meta">{activeClip.signatureStat.meta}</p>
+					<div className="cinematic-stats">
+						{activeClip.stats.map((stat, idx) => (
+							<div key={stat.label} className="stat-card">
+								<div className="stat-value">{statsDisplay[idx]}</div>
+								<div className="stat-label">{stat.label}</div>
 							</div>
-							<div className="cinematic-chips">
-								{activeClip.highlights.map((chip) => (
-									<span key={chip}>{chip}</span>
-								))}
-							</div>
-						</div>
-
-						<div className="cinematic-column cinematic-column--details">
-							<h3>
-								{activeClip.title}
-								<span>{activeClip.subtitle}</span>
-							</h3>
-							<p className="cinematic-description">{activeClip.description}</p>
-							<button type="button" className="cinematic-cta">
-								Book a cinematic drive ↗
-							</button>
-							<ul className="cinematic-meta-grid">
-								{activeClip.stats.map(({ label }, idx) => (
-									<li key={label}>
-										<p className="value">{statsDisplay[idx] || activeClip.stats[idx].value}</p>
-										<p className="label">{label}</p>
-									</li>
-								))}
-							</ul>
-							<div className="cinematic-controls">
-								<button type="button" onClick={goPrev} aria-label="Previous clip">
-									←
-								</button>
-								<div className="cinematic-dots">
-									{cinematicClips.map((_, idx) => (
-										<span key={idx} className={idx === activeIndex ? 'active' : ''} />
-									))}
-								</div>
-								<button type="button" onClick={goNext} aria-label="Next clip">
-									→
-								</button>
-							</div>
-						</div>
+						))}
 					</div>
+
+					<button className="cinematic-cta-btn">
+						<span>Experience This Power</span>
+						<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+							<path d="M5 12h14M12 5l7 7-7 7"/>
+						</svg>
+					</button>
+				</div>
+
+				<div className="cinematic-nav">
+					<button className="nav-arrow" onClick={goPrev} aria-label="Previous">
+						<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+							<path d="M15 18l-6-6 6-6"/>
+						</svg>
+					</button>
+					<div className="nav-dots">
+						{cinematicClips.map((_, idx) => (
+							<button
+								key={idx}
+								className={`nav-dot ${idx === activeIndex ? 'active' : ''}`}
+								onClick={() => setActiveIndex(idx)}
+								aria-label={`Go to clip ${idx + 1}`}
+							/>
+						))}
+					</div>
+					<button className="nav-arrow" onClick={goNext} aria-label="Next">
+						<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+							<path d="M9 18l6-6-6-6"/>
+						</svg>
+					</button>
 				</div>
 			</div>
 		</section>

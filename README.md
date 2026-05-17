@@ -1,6 +1,6 @@
 # BMW Concept React Experience
 
-A cinematic BMW landing experience built with React + Vite. It showcases immersive hero/video sections, a dealer locator, financing sandbox, and intelligence highlights inspired by BMW’s digital language.
+A polished BMW-inspired digital experience built with React + Vite, crafted to present a premium, portfolio-ready showcase of modern frontend design and interaction. The application combines immersive hero and video storytelling, interactive model exploration, a dealer locator, a finance sandbox, and intelligence-focused highlights, all tied together with smooth navigation, refined motion, and a responsive, production-ready layout.
 
 ## Live Preview
 - https://bmw-concept-react.vercel.app/

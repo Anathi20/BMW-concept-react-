@@ -1,6 +1,218 @@
-
-
 @import "tailwindcss";
+
+* {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Orbitron', system-ui, -apple-system, sans-serif;
+  cursor: none;
+}
+
+/* Custom blue dot cursor */
+.custom-cursor {
+  position: fixed;
+  width: 20px;
+  height: 20px;
+  background: #1c69d4;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 999999;
+  transform: translate(-50%, -50%);
+  transition: width 0.2s ease, height 0.2s ease, background 0.2s ease, opacity 0.2s ease;
+  box-shadow: 0 0 20px rgba(28, 105, 212, 0.8), 0 0 40px rgba(28, 105, 212, 0.4);
+}
+
+.custom-cursor::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  border: 2px solid rgba(28, 105, 212, 0.3);
+  border-radius: 50%;
+  animation: pulse-ring 1.5s ease-out infinite;
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: translate(-50%, -50%) scale(0.5);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.5);
+    opacity: 0;
+  }
+}
+
+* {
+  cursor: none !important;
+}
+
+/* Hover effect classes */
+.custom-cursor.hover {
+  width: 50px;
+  height: 50px;
+  background: rgba(28, 105, 212, 0.3);
+  border: 2px solid #1c69d4;
+}
+
+/* Focus visible styles for accessibility */
+*:focus-visible {
+  outline: 2px solid #1c69d4;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid #1c69d4;
+  outline-offset: 2px;
+}
+
+/* Skip to content link for keyboard navigation */
+.skip-to-content {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: #1c69d4;
+  color: white;
+  padding: 8px 16px;
+  text-decoration: none;
+  border-radius: 0 0 4px 0;
+  z-index: 100;
+  transition: top 0.3s ease;
+}
+
+.skip-to-content:focus {
+  top: 0;
+}
+
+/* Scroll animations */
+.scroll-animate {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.scroll-animate.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.scroll-animate-delay-1 {
+  transition-delay: 0.1s;
+}
+
+.scroll-animate-delay-2 {
+  transition-delay: 0.2s;
+}
+
+.scroll-animate-delay-3 {
+  transition-delay: 0.3s;
+}
+
+.scroll-animate-delay-4 {
+  transition-delay: 0.4s;
+}
+
+/* Fade in from left */
+.fade-in-left {
+  opacity: 0;
+  transform: translateX(-50px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.fade-in-left.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Fade in from right */
+.fade-in-right {
+  opacity: 0;
+  transform: translateX(50px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.fade-in-right.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Scale up animation */
+.scale-up {
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.scale-up.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Image loading animation */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+/* Dropdown slide down animation */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.image-loading {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.05) 0%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* Smooth transitions for all interactive elements */
+button,
+a,
+input,
+select,
+textarea {
+  transition: all 0.3s ease;
+}
+
+/* Custom scrollbar for webkit browsers */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #000;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1c69d4;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #1556ad;
+}
 
 :root {
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -28,12 +240,12 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  width: 100%;
   background-color: transparent;
   overflow-x: hidden;
+  scroll-padding-top: 80px;
 }
 
 h1 {
@@ -41,31 +253,6 @@ h1 {
   line-height: 1.1;
   font-weight: 700;
   color: #1a1a1a;
-}
-
-button {
-  border-radius: 4px;
-  border: 2px solid transparent;
-  padding: 0.75em 1.5em;
-  font-size: 1em;
-  font-weight: 600;
-  font-family: inherit;
-  background-color: #0066cc;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  color: #ffffff;
-  border-color: #0066cc;
-}
-button:hover {
-  border-color: #004499;
-  background-color: #004499;
-  color: #ffffff;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(0, 102, 204, 0.4);
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto #0066cc;
 }
 
 .hero-button {
@@ -105,10 +292,28 @@ button:focus-visible {
     background-color: #121212;
   }
   a:hover {
-    color: #ff6666;
+    color: #4fb0ff;
   }
-  button {
-    background-color: #ff3333;
-    color: #000000;
-  }
+}
+
+/* Navbar color lock to avoid inheriting global hover accents */
+#navbar a,
+#navbar a:visited {
+  color: #e9ecf3 !important;
+}
+
+#navbar a:hover,
+#navbar a:focus {
+  color: #f7f9ff !important;
+}
+
+/* Hard lock navbar to viewport top */
+#navbar {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  z-index: 99999 !important;
+  transform: none !important;
 }

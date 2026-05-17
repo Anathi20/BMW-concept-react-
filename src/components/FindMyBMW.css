@@ -1,0 +1,273 @@
+/* Find My BMW */
+.find-my-bmw {
+  position: relative;
+  min-height: 100vh;
+  background: #ffffff;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+.find-my-bmw::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: transparent;
+  pointer-events: none;
+}
+
+.find-my-bmw-content {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0 clamp(3rem, 5vw, 5rem);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6rem;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+  width: 100%;
+}
+
+/* Text Section */
+.bmw-text-section {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  animation: slideInLeft 1s ease-out;
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-60px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.bmw-main-title {
+  font-size: clamp(4rem, 8vw, 8rem);
+  font-weight: 900;
+  line-height: 0.95;
+  color: #000000;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  position: relative;
+}
+
+.bmw-main-title::after {
+  content: '';
+  position: absolute;
+  bottom: -20px;
+  left: 0;
+  width: 120px;
+  height: 4px;
+  background: #000000;
+}
+
+/* Buttons */
+.bmw-buttons {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.bmw-btn {
+  padding: 1.25rem 2.5rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border-radius: 0;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  position: relative;
+  overflow: hidden;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.bmw-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  transform: translate(-50%, -50%);
+  transition: width 0.4s, height 0.4s;
+}
+
+.bmw-btn:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.bmw-btn.primary {
+  background: #000000;
+  color: #ffffff;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.24);
+}
+
+.bmw-btn.primary:hover {
+  border-color: rgba(255, 255, 255, 0.9);
+
+  transform: translateY(-3px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+}
+
+.bmw-btn.secondary {
+  background: #ffffff;
+  color: #000000;
+  border: 2px solid #000000;
+}
+
+.bmw-btn.secondary:hover {
+  background: #000000;
+  color: #ffffff;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.btn-icon {
+  font-size: 1.5rem;
+  transition: transform 0.3s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.bmw-btn:hover .btn-icon {
+  transform: translateX(5px);
+}
+
+.electric-badge {
+  font-size: 1.2rem;
+  position: relative;
+  z-index: 1;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+/* Image Section */
+.bmw-image-section {
+  animation: slideInRight 1s ease-out;
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(60px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.image-container {
+  position: relative;
+  border-radius: 0;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  transition: transform 0.4s ease;
+  min-height: 500px;
+}
+
+.image-container:hover {
+  transform: scale(1.02) translateY(-10px);
+}
+
+.bmw-ix-image {
+  width: 100%;
+  height: 100%;
+  min-height: 500px;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.image-container:hover .bmw-ix-image {
+  transform: scale(1.05);
+}
+
+.image-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(0, 0, 0, 0.1) 100%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.image-container:hover .image-overlay {
+  opacity: 1;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .find-my-bmw-content {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    padding: 4rem 2rem;
+  }
+
+  .bmw-text-section {
+    text-align: center;
+    align-items: center;
+  }
+
+  .bmw-main-title::after {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .bmw-buttons {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .bmw-main-title {
+    font-size: clamp(3rem, 12vw, 5rem);
+  }
+
+  .bmw-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .bmw-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .image-container {
+    border-radius: 0;
+  }
+}
