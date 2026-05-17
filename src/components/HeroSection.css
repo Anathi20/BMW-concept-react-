@@ -128,8 +128,8 @@
 
 /* Hero text entrance animation (one-time on load) */
 .hero-text {
-	opacity: 0;
-	transform: translateY(18px) scale(0.995);
+	opacity: 1;
+	transform: none;
 	will-change: transform, opacity;
 }
 
